@@ -1,0 +1,476 @@
+```html
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>神雲神社 - 総合案内・絵馬奉納</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts (Noto Serif JP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: {
+              950: '#040812',
+              900: '#07101f',
+              800: '#0c1a30',
+              700: '#132646',
+              600: '#1e3863',
+            },
+            gold: {
+              100: '#f9f5ea',
+              200: '#eddcae',
+              300: '#dfbc78',
+              400: '#c8a96e',
+              500: '#b08d4f',
+              600: '#8c6b32',
+            },
+            vermilion: '#b83b26',
+          },
+          fontFamily: {
+            serif: ['"Noto Serif JP"', '"Hiragino Mincho ProN"', '"Yu Mincho"', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #040812;
+      background-image: 
+        radial-gradient(circle at 50% 0%, #132646 0%, transparent 60%),
+        radial-gradient(circle at 85% 50%, rgba(200, 169, 110, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 15% 85%, rgba(19, 38, 70, 0.5) 0%, transparent 50%);
+      color: #eef2f7;
+      font-family: 'Noto Serif JP', serif;
+    }
+
+    /* 和風カード枠 */
+    .washi-card {
+      background: linear-gradient(145deg, rgba(19, 38, 70, 0.85) 0%, rgba(12, 26, 48, 0.95) 100%);
+      border: 1px solid rgba(200, 169, 110, 0.25);
+      backdrop-filter: blur(8px);
+    }
+
+    /* 絵馬型の形状 */
+    .ema-shape {
+      position: relative;
+      background: linear-gradient(135deg, #132646 0%, #091426 100%);
+      border: 1px solid rgba(200, 169, 110, 0.35);
+      clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%, 0 14px);
+    }
+    .ema-shape::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: #040812;
+      border: 2px solid #c8a96e;
+    }
+
+    /* ボタンの光沢 */
+    .btn-gold {
+      background: linear-gradient(180deg, #2a4675 0%, #172c4e 100%);
+      border: 1px solid #c8a96e;
+    }
+    .btn-gold:hover {
+      background: linear-gradient(180deg, #34548a 0%, #1e3863 100%);
+      border-color: #dfbc78;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-100">
+
+  <!-- ヒーロー・神社題目（固定ではなく自然なヘッダー） -->
+  <header class="w-full pt-12 pb-10 px-4 text-center border-b border-gold-400/20">
+    <div class="max-w-3xl mx-auto flex flex-col items-center">
+      <div class="w-14 h-14 mb-4 rounded-full border border-gold-400/50 flex items-center justify-center bg-navy-900 shadow-xl">
+        <span class="text-gold-300 font-bold text-xl tracking-tight">神雲</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-widest text-gold-200 font-serif">神雲神社</h1>
+      <p class="text-xs sm:text-sm text-slate-400 mt-2 tracking-widest">かみもじんじゃ ・ ネット参拝社務所</p>
+
+      <p class="text-xs sm:text-sm text-gold-300/90 italic mt-6 max-w-lg leading-relaxed font-serif">
+        「夜空の静寂とたゆたう雲の下、貴方の心にある言葉をお預かりいたします。」
+      </p>
+
+      <!-- ページ内目次リンク -->
+      <div class="flex flex-wrap justify-center gap-3 sm:gap-6 mt-8 text-xs text-gold-300/80">
+        <a href="#about" class="hover:text-gold-200 hover:underline">◇ 御由緒</a>
+        <a href="#sanpai" class="hover:text-gold-200 hover:underline">◇ 参拝別案内</a>
+        <a href="#omikuji" class="hover:text-gold-200 hover:underline">◇ 神雲おみくじ</a>
+        <a href="#ema" class="hover:text-gold-200 hover:underline">◇ 絵馬奉納</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ（縦長スクロール） -->
+  <main class="max-w-3xl mx-auto w-full px-4 py-10 space-y-16 flex-1">
+
+    <!-- ================= 1. 御由緒・挨拶 ================= -->
+    <section id="about" class="space-y-6 scroll-mt-6">
+      <div class="washi-card p-6 sm:p-8 rounded-xl shadow-2xl">
+        <div class="text-center mb-6">
+          <span class="text-[11px] text-gold-400/80 tracking-widest block mb-1">ABOUT KAMIMO JINJA</span>
+          <h2 class="text-xl sm:text-2xl font-bold text-gold-200 tracking-wider">御由緒と神雲の刻</h2>
+          <div class="w-16 h-px bg-gold-400/40 mx-auto mt-3"></div>
+        </div>
+
+        <div class="space-y-4 text-sm sm:text-base leading-relaxed text-slate-200 font-serif">
+          <p>
+            神雲神社（かみもじんじゃ）は、静謐なる夜空と雲のたゆたいを守護とする、古き静かなお社です。<br />
+            日々の喧噪や心の迷いに少し疲れた参拝者が、穏やかな静寂の中で身を清め、前を向くための場所として守り継がれております。
+          </p>
+          <p>
+            宮司を務める<strong class="text-gold-300 font-semibold">神崎 真（かんざき まこと）</strong>の手により、現代における「ネット参拝社務所」が開かれました。遠方より思いを寄せる方々も、等しく祈りを捧げられるよう整えられています。
+          </p>
+        </div>
+      </div>
+
+      <!-- 宮司・神崎真の言葉 -->
+      <div class="washi-card p-6 rounded-xl border-l-4 border-l-gold-400 flex flex-col sm:flex-row items-start gap-4">
+        <div class="w-12 h-12 rounded-full bg-navy-800 border border-gold-400/30 flex items-center justify-center flex-shrink-0 text-gold-300 font-bold text-sm">
+          神崎
+        </div>
+        <div class="space-y-2">
+          <h3 class="text-sm font-semibold text-gold-300 tracking-wider">宮司 神崎真よりご挨拶</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed italic font-serif">
+            「お越しいただきありがとうございます。言葉にできない悩みや、大切な人への密かな想い……どうぞこの神雲の静けさに預けにいらしてください。皆様の歩む道が、優しく照らされますように。」
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 2. 参拝別のご案内 ================= -->
+    <section id="sanpai" class="space-y-6 scroll-mt-6">
+      <div class="text-center mb-6">
+        <span class="text-[11px] text-gold-400/80 tracking-widest block mb-1">WORSHIP GUIDANCE</span>
+        <h2 class="text-xl sm:text-2xl font-bold text-gold-200 tracking-wider">参拝別のご案内</h2>
+        <p class="text-xs text-slate-400 mt-1">ご自身の心に合った参拝をお選びいただき、祈りをお納めください</p>
+        <div class="w-16 h-px bg-gold-400/40 mx-auto mt-3"></div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6">
+
+        <!-- 参拝1：通常参拝（心願成就・静心） -->
+        <div class="washi-card p-6 rounded-xl space-y-3">
+          <div class="flex items-center gap-3 border-b border-gold-400/20 pb-2">
+            <span class="px-2.5 py-1 rounded bg-navy-900 border border-gold-400/40 text-gold-300 text-xs font-semibold">通常参拝</span>
+            <h3 class="text-base font-semibold text-gold-200">心願成就・日々の平穏（静心祈願）</h3>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-serif">
+            心を落ち着かせ、日々を健康に過ごせることへの感謝と、ささやかな願いをお納めする基本の参拝です。<br />
+            二礼二拍手一礼の作法で、神前の静けさに心を委ねてください。
+          </p>
+          <div class="text-[11px] text-gold-400/80 italic pt-1">
+            神崎添え書き：「日々の平穏こそが最大の御利益。まずは深呼吸をしてお参りください。」
+          </div>
+        </div>
+
+        <!-- 参拝2：恋愛成就参拝（縁結び・想いを結ぶ）★しっかり記述 -->
+        <div class="washi-card p-6 rounded-xl space-y-3 border-l-2 border-l-pink-400/60">
+          <div class="flex items-center gap-3 border-b border-gold-400/20 pb-2">
+            <span class="px-2.5 py-1 rounded bg-navy-900 border border-pink-400/40 text-pink-300 text-xs font-semibold">恋愛成就参拝</span>
+            <h3 class="text-base font-semibold text-gold-200">良縁祈願・縁結び・素直な心を届ける祈願</h3>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-serif">
+            神雲神社における「恋愛成就」は、ただ良縁を願うだけでなく、<strong class="text-gold-300 font-normal">「大切な誰かを愛し、素直な言葉を伝える勇気を持つこと」</strong>を守護いたします。
+          </p>
+          <ul class="text-xs sm:text-sm text-slate-300 leading-relaxed space-y-1.5 list-disc list-inside font-serif pl-1">
+            <li><strong class="text-gold-200 font-normal">良縁・縁結び：</strong> 貴方にとって真に心を許せる温かなお相手とのご縁を結びます。</li>
+            <li><strong class="text-gold-200 font-normal">想いを伝える祈願：</strong> すれ違いを解き、意地を張らず素直な気持ちを言葉にする強さを授けます。</li>
+            <li><strong class="text-gold-200 font-normal">絆の長久：</strong> すでに大切な人がいる方へ、互いを慈しみ永く寄り添う静寂の加護を導きます。</li>
+          </ul>
+          <div class="text-[11px] text-pink-300/90 italic pt-2 border-t border-navy-700/60">
+            神崎添え書き：「恋や愛に迷うときは、言葉を飾らずそのままの気持ちで参拝してください。あなたの素直な想いは、きっと優しく届きます。」
+          </div>
+        </div>
+
+        <!-- 参拝3：仕事・学業・願望成就参拝 -->
+        <div class="washi-card p-6 rounded-xl space-y-3">
+          <div class="flex items-center gap-3 border-b border-gold-400/20 pb-2">
+            <span class="px-2.5 py-1 rounded bg-navy-900 border border-gold-400/40 text-gold-300 text-xs font-semibold">仕事・学業参拝</span>
+            <h3 class="text-base font-semibold text-gold-200">目標達成・学業成就・大願成就祈願</h3>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-serif">
+            日々の勉強や仕事、果たすべき目標に向かって努力を重ねる方のための祈願です。<br />
+            雑音に惑わされず、積み重ねてきた実力を余すことなく発揮できるよう祈念いたします。
+          </p>
+          <div class="text-[11px] text-gold-400/80 italic pt-1">
+            神崎添え書き：「静かな努力は裏切りません。落ち着いて目の前の事に向き合ってください。」
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= 3. 神雲おみくじ ================= -->
+    <section id="omikuji" class="space-y-6 scroll-mt-6">
+      <div class="washi-card p-6 sm:p-8 rounded-xl text-center space-y-6">
+        <div>
+          <span class="text-[11px] text-gold-400/80 tracking-widest block mb-1">DIVINATION</span>
+          <h2 class="text-xl sm:text-2xl font-bold text-gold-200 tracking-wider">神雲おみくじ</h2>
+          <p class="text-xs sm:text-sm text-slate-300 mt-2 font-serif">
+            本日の運勢と、神崎宮司より一筆のお言葉をお授けいたします。
+          </p>
+        </div>
+
+        <!-- おみくじ引き出しエリア -->
+        <div id="omikuji-box" class="py-8 my-4 border-y border-gold-400/20 flex flex-col items-center justify-center">
+          <div id="omikuji-result" class="hidden space-y-4 max-w-md mx-auto">
+            <span id="omikuji-fortune" class="inline-block text-3xl font-bold text-gold-300 px-6 py-2 border-2 border-gold-400/50 rounded bg-navy-900/90">
+              大吉
+            </span>
+            <p id="omikuji-word" class="text-sm sm:text-base text-slate-200 font-serif leading-relaxed px-4 py-3 bg-navy-950/60 rounded border border-slate-700/60">
+              「積み重ねてきた静寂な努力が、間もなく綺麗な実を結ぶでしょう。焦らずその歩みをお進めください。」
+            </p>
+            <p class="text-xs text-gold-400/80">— 宮司 神崎真 添え書き</p>
+          </div>
+
+          <button id="draw-btn" onclick="drawOmikuji()" class="btn-gold text-gold-100 font-semibold px-8 py-3.5 rounded-md tracking-widest text-sm shadow-lg active:scale-95 transition-all">
+            おみくじを引く
+          </button>
+        </div>
+
+        <p class="text-[11px] text-slate-400">
+          ※おみくじは1日何度でもお引きいただけます。心静かにボタンを押してください。
+        </p>
+      </div>
+    </section>
+
+    <!-- ================= 4. 絵馬奉納 ================= -->
+    <section id="ema" class="space-y-8 scroll-mt-6">
+      
+      <div class="text-center mb-4">
+        <span class="text-[11px] text-gold-400/80 tracking-widest block mb-1">EMA OFFERING</span>
+        <h2 class="text-xl sm:text-2xl font-bold text-gold-200 tracking-wider">絵馬奉納</h2>
+        <p class="text-xs text-slate-300 mt-1">願い事や大切な方への想いをお納めください（1日1回）</p>
+        <div class="w-16 h-px bg-gold-400/40 mx-auto mt-3"></div>
+      </div>
+
+      <!-- 絵馬入力カード -->
+      <div id="emaFormCard" class="ema-shape p-6 sm:p-8 rounded-lg relative">
+        
+        <form id="emaForm" class="space-y-5 pt-2">
+          
+          <!-- お名前 -->
+          <div>
+            <label for="emaName" class="block text-xs sm:text-sm text-gold-300 font-medium mb-1.5 tracking-wider flex justify-between items-center">
+              <span>お名前 <span class="text-slate-400 text-xs font-normal">（任意 / ニックネーム可）</span></span>
+              <span class="text-[10px] text-slate-400">未入力時は「匿名」</span>
+            </label>
+            <input
+              type="text"
+              id="emaName"
+              name="name"
+              placeholder="例：名無しの参拝者"
+              maxlength="40"
+              class="w-full px-4 py-2.5 rounded bg-navy-950/90 border border-gold-400/30 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400 transition-all"
+            />
+          </div>
+
+          <!-- 願い事・奉納内容 -->
+          <div>
+            <label for="emaWish" class="block text-xs sm:text-sm text-gold-300 font-medium mb-1.5 tracking-wider flex justify-between">
+              <span>願い事・奉納内容 <span class="text-vermilion text-xs">*必須</span></span>
+              <span id="charCounter" class="text-[10px] text-slate-400">0 / 300字</span>
+            </label>
+            <textarea
+              id="emaWish"
+              name="wish"
+              placeholder="ここに願い事や、恋愛・良縁・創作成就への想いをお書きください…"
+              maxlength="300"
+              required
+              rows="4"
+              class="w-full px-4 py-2.5 rounded bg-navy-950/90 border border-gold-400/30 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400 transition-all leading-relaxed font-serif"
+            ></textarea>
+          </div>
+
+          <!-- 送信ボタン -->
+          <button
+            type="submit"
+            id="emaSubmitBtn"
+            class="w-full py-3.5 px-6 rounded bg-gradient-to-r from-navy-700 via-gold-600 to-navy-700 border border-gold-400/80 text-gold-100 font-semibold tracking-widest text-sm shadow-lg hover:brightness-110 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            <span>絵馬を奉納する</span>
+          </button>
+
+          <!-- メッセージ通知エリア（完了・制限時） -->
+          <div id="statusMessage" class="hidden p-4 rounded text-xs sm:text-sm leading-relaxed transition-all"></div>
+        </form>
+      </div>
+
+      <!-- 奉納済み絵馬（掲載枠） -->
+      <div class="space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="h-px bg-gold-400/20 flex-1"></div>
+          <h3 class="text-xs sm:text-sm font-semibold text-gold-300 tracking-widest text-center">奉納済み絵馬（社務所拝納録）</h3>
+          <div class="h-px bg-gold-400/20 flex-1"></div>
+        </div>
+
+        <!-- 手動掲載用エリア（ラベルなしのシンプル表示） -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- 絵馬枠1 -->
+          <div class="ema-shape p-4 rounded">
+            <div class="text-xs text-gold-400/80 mb-2 pt-2 border-b border-gold-400/10 pb-1">
+              <span class="font-medium">奉納者：雲間の月</span>
+            </div>
+            <p class="text-xs text-slate-200 leading-relaxed font-serif">
+              「すれ違っていた想いが優しくほどけ、大切な人と素直な言葉で笑いあえますように。」
+            </p>
+          </div>
+
+          <!-- 絵馬枠2 -->
+          <div class="ema-shape p-4 rounded">
+            <div class="text-xs text-gold-400/80 mb-2 pt-2 border-b border-gold-400/10 pb-1">
+              <span class="font-medium">奉納者：名無しの参拝者</span>
+            </div>
+            <p class="text-xs text-slate-200 leading-relaxed font-serif">
+              「家族がみな健康で、穏やかな日々を過ごせますように。」
+            </p>
+          </div>
+        </div>
+
+        <p class="text-[11px] text-slate-400 text-center">
+          ※お納めいただいた絵馬は、社務所にて拝見ののち順次掲載されます。
+        </p>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- フッター -->
+  <footer class="w-full py-8 px-4 border-t border-gold-400/10 bg-navy-950 text-center text-slate-400 text-xs space-y-2">
+    <p class="font-serif text-slate-300">神雲神社（かみもじんじゃ） ネット参拝社務所</p>
+    <p class="text-[10px] text-slate-400 tracking-wider">※本サイト・本企画はフィクション（創作）です。</p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // Google Form 設定
+    const FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdAbDqI-X5Uf7Vg2Kf-B8bIx937FFXm5n_9FfNLEyvkGw4vSA/formResponse";
+    const ENTRY_NAME = "entry.202850054";
+    const ENTRY_WISH = "entry.531145208";
+    const STORAGE_KEY = "kamimo_ema_last_date";
+
+    // おみくじデータ
+    const OMIKUJI_DATA = [
+      { fortune: "大吉", word: "「澄み渡る夜空のように、心は晴れやか。素直な気持ちで進めば、良縁と希望が導かれます。」" },
+      { fortune: "吉", word: "「積み重ねてきた静かな努力が綺麗な芽を覗かせています。焦らずそのままお進みください。」" },
+      { fortune: "中吉", word: "「大切な人との穏やかな対話の中に、心のひもときが見つかります。意地を張らず素直に。」" },
+      { fortune: "小吉", word: "「迷ったときは一度立ち止まり、深呼吸を。夜の雲はやがて去り、月が優しく照らします。」" },
+      { fortune: "末吉", word: "「急ぎすぎぬことが吉。歩幅を緩め、今日という日を大切に紡ぐことで運が拓けます。」" }
+    ];
+
+    function drawOmikuji() {
+      const drawBtn = document.getElementById("draw-btn");
+      const resultBox = document.getElementById("omikuji-result");
+      const fortuneEl = document.getElementById("omikuji-fortune");
+      const wordEl = document.getElementById("omikuji-word");
+
+      drawBtn.disabled = true;
+      drawBtn.textContent = "祈念中……";
+
+      setTimeout(() => {
+        const item = OMIKUJI_DATA[Math.floor(Math.random() * OMIKUJI_DATA.length)];
+        fortuneEl.textContent = item.fortune;
+        wordEl.textContent = item.word;
+
+        resultBox.classList.remove("hidden");
+        drawBtn.disabled = false;
+        drawBtn.textContent = "もう一度引く";
+      }, 600);
+    }
+
+    // 1日1回制限チェック
+    function getTodayString() {
+      const today = new Date();
+      return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    }
+
+    function checkSubmissionLimit() {
+      const lastDate = localStorage.getItem(STORAGE_KEY);
+      const today = getTodayString();
+
+      const btn = document.getElementById("emaSubmitBtn");
+      const statusMessage = document.getElementById("statusMessage");
+
+      if (lastDate === today) {
+        btn.disabled = true;
+        btn.textContent = "本日の奉納は完了しています";
+        showStatus("info", "<strong>【本日の奉納受付終了】</strong><br />本日分のお絵馬はお納め済みです。また明日のお参りをお待ちしております。");
+      }
+    }
+
+    // 文字数カウンタ
+    const emaWishInput = document.getElementById("emaWish");
+    const charCounter = document.getElementById("charCounter");
+
+    if (emaWishInput && charCounter) {
+      emaWishInput.addEventListener("input", () => {
+        charCounter.textContent = `${emaWishInput.value.length} / 300字`;
+      });
+    }
+
+    // メッセージ表示関数
+    const statusMessage = document.getElementById("statusMessage");
+
+    function showStatus(type, text) {
+      statusMessage.classList.remove("hidden", "bg-emerald-900/40", "border-emerald-500/50", "text-emerald-200", "bg-rose-900/40", "border-rose-500/50", "text-rose-200", "bg-navy-900/80", "border-gold-400/40", "text-gold-200");
+      statusMessage.classList.add("border");
+
+      if (type === "success") {
+        statusMessage.classList.add("bg-emerald-900/40", "border-emerald-500/50", "text-emerald-200");
+      } else if (type === "error") {
+        statusMessage.classList.add("bg-rose-900/40", "border-rose-500/50", "text-rose-200");
+      } else {
+        // info
+        statusMessage.classList.add("bg-navy-900/80", "border-gold-400/40", "text-gold-200");
+      }
+      statusMessage.innerHTML = text;
+    }
+
+    // 絵馬フォーム送信処理
+    const emaForm = document.getElementById("emaForm");
+    const submitBtn = document.getElementById("emaSubmitBtn");
+
+    emaForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const nameVal = document.getElementById("emaName").value.trim() || "匿名";
+      const wishVal = emaWishInput.value.trim();
+
+      if (!wishVal) {
+        showStatus("error", "願い事・奉納内容を入力してください。");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      showStatus("info", "神雲神社へ奉納処理を行っています……");
+
+      const body = new URLSearchParams();
+      body.append(ENTRY_NAME, nameVal);
+      body.append(ENTRY_WISH, wishVal);
+
+      try {
+        await fetch(FORM_ACTION_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+          },
+          body: body.toString(),
+        });
+
+        loc
