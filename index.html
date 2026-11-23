@@ -458,19 +458,7 @@
   function showStatus(type, text) {
     const statusMessage = document.getElementById("statusMessage");
     if (!statusMessage) return;
-    statusMessage.classList.remove("hidden", "bg-emerald-900/40", "border-emerald-500/50", "text-emerald-200", "bg-rose-900/40", "border-rose-500/50", "text-rose-200", "bg-navy-900/40", "border-gold-400/40", "text-gold-200");
-    statusMessage.classList.add("border");
-
-    if (type === "success") {
-      statusMessage.classList.add("bg-emerald-900/40", "border-emerald-500/50", "text-emerald-200");
-    } else if (type === "error") {
-      statusMessage.classList.add("bg-rose-900/40", "border-rose-500/50", "text-rose-200");
-    } else {
-      statusMessage.classList.add("bg-navy-900/40", "border-gold-400/40", "text-gold-200");
-    }
-    statusMessage.textContent = text;
-  }
-
+    
   function checkSubmissionLimit() {
     const btn = document.getElementById("emaSubmitBtn");
     if (!btn) return;
