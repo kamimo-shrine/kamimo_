@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ja" class="scroll-smooth">
 <head>
@@ -430,26 +429,85 @@
       statusMessage.classList.remove("hidden", "bg-emerald-900/40", "border-emerald-500/50", "text-emerald-200", "bg-rose-900/40", "border-rose-500/50", "text-rose-200", "bg-navy-900/80", "border-gold-400/40", "text-gold-200");
       statusMessage.classList.add("border");
 
-      if (type === "success") {
-        statusMessage.classList.add("bg-emerald-900/40", "border-emerald-500/50", "text-emerald-200");
-      } else if (type === "error") {
-        statusMessage.classList.add("bg-rose-900/40", "border-rose-500/50", "text-rose-200");
-      } else {
-        // info
-        statusMessage.classList.add("bg-navy-900/80", "border-gold-400/40", "text-gold-200");
-      }
-      statusMessage.innerHTML = text;
+    <script>
+  const FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdAbDqI-X5Uf7Vg2Kf-B8bIx937FFXm5n_9FfNLEyvkGw4vSA/formResponse
+";
+  const ENTRY_NAME = "entry.202850054";
+  const ENTRY_WISH = "entry.531145208";
+  const STORAGE_KEY = "kamimo_ema_last_date";
+
+  const OMIKUJI_LIST = [
+    { fortune: "大吉", poem: "雲晴れし 朝日に映ゆる 結び糸\n心澄みゆき 良縁満たん" },
+    { fortune: "中吉", poem: "静けさの 境に灯る 小さき火\n焦らず歩めば 道は開けん" },
+    { fortune: "小吉", poem: "風の音 そよぐ梢に 告ぐる声\n誠を尽くせば 願い叶わん" },
+    { fortune: "吉", poem: "紺碧の 空に浮かべる ひとひらの\n希望の欠片 胸に抱かん" }
+  ];
+
+  function drawOmikuji() {
+    const resultBox = document.getElementById("omikuji-result");
+    const fortuneEl = document.getElementById("omikuji-fortune");
+    const poemEl = document.getElementById("omikuji-poem");
+    if (!resultBox || !fortuneEl || !poemEl) return;
+
+    const picked = OMIKUJI_LIST[Math.floor(Math.random() * OMIKUJI_LIST.length)];
+    fortuneEl.textContent = picked.fortune;
+    poemEl.textContent = picked.poem;
+    resultBox.classList.remove("hidden");
+  }
+
+  function getTodayKey() {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, "0");
+    const d = String(now.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+
+  function showStatus(type, text) {
+    const statusMessage = document.getElementById("statusMessage");
+    if (!statusMessage) return;
+    statusMessage.classList.remove("hidden", "bg-emerald-900/40", "border-emerald-500/50", "text-emerald-200", "bg-rose-900/40", "border-rose-500/50", "text-rose-200", "bg-navy-900/40", "border-gold-400/40", "text-gold-200");
+    statusMessage.classList.add("border");
+
+    if (type === "success") {
+      statusMessage.classList.add("bg-emerald-900/40", "border-emerald-500/50", "text-emerald-200");
+    } else if (type === "error") {
+      statusMessage.classList.add("bg-rose-900/40", "border-rose-500/50", "text-rose-200");
+    } else {
+      statusMessage.classList.add("bg-navy-900/40", "border-gold-400/40", "text-gold-200");
+    }
+    statusMessage.textContent = text;
+  }
+
+  function checkSubmissionLimit() {
+    const btn = document.getElementById("emaSubmitBtn");
+    if (!btn) return;
+    if (localStorage.getItem(STORAGE_KEY) === getTodayKey()) {
+      btn.disabled = true;
+      btn.textContent = "本日の奉納は完了しています";
+      showStatus("info", "本日の絵馬奉納は受付済みです。また明日のお参りをお待ちしております。");
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const wishInput = document.getElementById("emaWish");
+    const charCounter = document.getElementById("charCounter");
+    if (wishInput && charCounter) {
+      wishInput.addEventListener("input", () => {
+        charCounter.textContent = `${wishInput.value.length} / 300字`;
+      });
     }
 
-    // 絵馬フォーム送信処理
+    checkSubmissionLimit();
+
     const emaForm = document.getElementById("emaForm");
     const submitBtn = document.getElementById("emaSubmitBtn");
+    if (!emaForm || !submitBtn) return;
 
     emaForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-
-      const nameVal = document.getElementById("emaName").value.trim() || "匿名";
-      const wishVal = emaWishInput.value.trim();
+      const nameVal = (document.getElementById("emaName")?.value || "").trim() || "匿名";
+      const wishVal = (document.getElementById("emaWish")?.value || "").trim();
 
       if (!wishVal) {
         showStatus("error", "願い事・奉納内容を入力してください。");
@@ -457,7 +515,7 @@
       }
 
       submitBtn.disabled = true;
-      showStatus("info", "神雲神社へ奉納処理を行っています……");
+      showStatus("info", "神雲神社へ奉納を行っています…");
 
       const body = new URLSearchParams();
       body.append(ENTRY_NAME, nameVal);
@@ -468,9 +526,20 @@
           method: "POST",
           mode: "no-cors",
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
           },
-          body: body.toString(),
+          body: body.toString()
         });
 
-        loc
+        localStorage.setItem(STORAGE_KEY, getTodayKey());
+        submitBtn.textContent = "本日の奉納は完了しています";
+        showStatus("success", "絵馬の奉納を受け付けました。願いが届きますように。");
+        emaForm.reset();
+        if (charCounter) charCounter.textContent = "0 / 300字";
+      } catch (err) {
+        submitBtn.disabled = false;
+        showStatus("error", "送信中に問題が発生しました。時間をおいて再度お試しください。");
+      }
+    });
+  });
+</script>
