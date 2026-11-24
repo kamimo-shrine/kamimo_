@@ -86,6 +86,36 @@
       background: linear-gradient(180deg, #34548a 0%, #1e3863 100%);
       border-color: #dfbc78;
     }
+    .btn-stop {
+      background: linear-gradient(180deg, #9e2a1c 0%, #6b180e 100%);
+      border: 1px solid #f2a699;
+      color: #fff5f2;
+    }
+    .btn-stop:hover {
+      background: linear-gradient(180deg, #b83b26 0%, #7f1e13 100%);
+    }
+
+    /* お茶注ぎ＆湯気アニメーション */
+    @keyframes teaFlow {
+      0% { stroke-dashoffset: 18; opacity: 0.75; }
+      100% { stroke-dashoffset: 0; opacity: 1; }
+    }
+    .tea-stream {
+      stroke-dasharray: 7 4;
+      animation: teaFlow 0.22s linear infinite;
+    }
+    @keyframes steamFloat1 {
+      0% { transform: translateY(0); opacity: 0; }
+      40% { opacity: 0.75; }
+      100% { transform: translateY(-10px); opacity: 0; }
+    }
+    @keyframes steamFloat2 {
+      0% { transform: translateY(0); opacity: 0; }
+      50% { opacity: 0.65; }
+      100% { transform: translateY(-12px); opacity: 0; }
+    }
+    .steam-1 { animation: steamFloat1 1.6s ease-out infinite; }
+    .steam-2 { animation: steamFloat2 1.9s ease-out 0.4s infinite; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between text-slate-100">
@@ -109,6 +139,7 @@
         <a href="#sanpai" class="hover:text-gold-200 hover:underline">◇ 参拝別案内</a>
         <a href="#omikuji" class="hover:text-gold-200 hover:underline">◇ 神雲おみくじ</a>
         <a href="#ema" class="hover:text-gold-200 hover:underline">◇ 絵馬奉納</a>
+        <a href="#tea-game" class="hover:text-gold-200 hover:underline">◇ 神雲お茶注ぎ</a>
       </div>
     </div>
   </header>
@@ -347,6 +378,101 @@
 
     </section>
 
+    <!-- ================= 5. 神雲お茶注ぎ（7秒チャレンジ） ================= -->
+    <section id="tea-game" class="space-y-6 scroll-mt-6">
+      <div class="washi-card p-6 sm:p-8 rounded-2xl text-center space-y-6 shadow-2xl">
+        <div>
+          <span class="text-[11px] text-gold-400/80 tracking-widest block mb-1">TEA TIME CHALLENGE</span>
+          <h2 class="text-xl sm:text-2xl font-bold text-gold-200 tracking-wider">神雲お茶注ぎ</h2>
+          <p class="text-xs sm:text-sm text-slate-300 mt-2 font-serif leading-relaxed">
+            心の中で<span class="text-gold-300 font-bold">【7.00秒】</span>を数え、タイミングよく止めてください。<br />
+            <span class="text-[11px] text-gold-400/80">※3.00秒まではカウント表示、それ以降は感覚勝負です。</span>
+          </p>
+        </div>
+
+        <!-- 急須・湯呑み表示エリア（急須は定位置で傾き、お茶は注ぎ口から真っ直ぐ落下） -->
+        <div class="bg-navy-950/85 border border-gold-400/20 rounded-xl p-4 sm:p-5 space-y-3">
+          <div class="font-mono text-xl sm:text-2xl font-bold tracking-wider text-gold-200">
+            <span id="teaTimerDisplay">0.00 秒</span>
+          </div>
+
+          <div class="w-full h-40 flex items-center justify-center">
+            <svg viewBox="0 0 240 150" class="w-64 h-40 overflow-visible">
+              <!-- 湯気 -->
+              <g id="steamGroup" class="opacity-0 transition-opacity duration-300">
+                <path d="M 116 78 Q 113 68 116 58" stroke="#eddcae" stroke-width="2" stroke-linecap="round" fill="none" class="steam-1" />
+                <path d="M 125 76 Q 128 66 125 56" stroke="#eddcae" stroke-width="2" stroke-linecap="round" fill="none" class="steam-2" />
+              </g>
+
+              <!-- 急須（定位置の軸を中心に傾ける） -->
+              <g id="teaKyusu" style="transform-origin: 162px 46px; transform: rotate(0deg); transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);">
+                <!-- 取っ手 -->
+                <path d="M 188 46 Q 205 46 203 57 Q 201 66 187 61" stroke="#c8a96e" stroke-width="3.2" fill="none" stroke-linecap="round" />
+                <!-- 本体 -->
+                <ellipse cx="162" cy="48" rx="24" ry="16" fill="#132646" stroke="#c8a96e" stroke-width="2" />
+                <!-- 蓋 -->
+                <ellipse cx="162" cy="34" rx="12" ry="3.5" fill="#07101f" stroke="#c8a96e" stroke-width="1.5" />
+                <circle cx="162" cy="30" r="2.8" fill="#c8a96e" />
+                <!-- 注ぎ口 -->
+                <path d="M 140 45 L 120 38 L 123 44 L 140 52 Z" fill="#132646" stroke="#c8a96e" stroke-width="1.5" />
+              </g>
+
+              <!-- お茶の注ぎ線（傾いた注ぎ口先付近から湯呑みへ真っ直ぐ注ぐ） -->
+              <g id="teaStreamGroup" class="hidden">
+                <line x1="120" y1="53" x2="120" y2="92" stroke="#84cc16" stroke-width="4" stroke-linecap="round" class="tea-stream" />
+                <line x1="120" y1="53" x2="120" y2="92" stroke="#ecfccb" stroke-width="1.2" stroke-linecap="round" class="tea-stream" />
+              </g>
+
+              <!-- 湯呑み -->
+              <g id="teaYunomi">
+                <path d="M 105 90 L 109 120 Q 120 124 131 120 L 135 90 Z" fill="#07101f" stroke="#c8a96e" stroke-width="2" />
+                <ellipse cx="120" cy="90" rx="15" ry="3.8" fill="#132646" stroke="#c8a96e" stroke-width="1.5" />
+                <ellipse id="teaSurface" cx="120" cy="115" rx="11" ry="2.2" fill="#65a30d" style="transition: all 0.3s ease;" />
+              </g>
+
+              <!-- こぼれたお茶 -->
+              <g id="teaSpill" class="hidden">
+                <ellipse cx="120" cy="124" rx="42" ry="6.5" fill="#4d7c0f" opacity="0.85" />
+                <ellipse cx="120" cy="124" rx="33" ry="4.8" fill="#65a30d" opacity="0.95" />
+              </g>
+            </svg>
+          </div>
+
+          <p id="teaHint" class="text-xs text-gold-400/80 font-serif min-h-[1.25rem]">
+            「お茶を注ぎ始める」を押してスタート
+          </p>
+        </div>
+
+        <!-- 操作ボタン -->
+        <div id="teaControls">
+          <button id="teaStartBtn" type="button" class="w-full py-3.5 px-6 rounded-md btn-gold text-gold-100 font-semibold tracking-widest text-sm shadow-lg active:scale-95 transition-all">
+            お茶を注ぎ始める
+          </button>
+          <button id="teaStopBtn" type="button" class="hidden w-full py-3.5 px-6 rounded-md btn-stop font-semibold tracking-widest text-sm shadow-xl active:scale-95 transition-all">
+            止める
+          </button>
+        </div>
+
+        <!-- 結果表示 -->
+        <div id="teaResultBox" class="hidden space-y-4 pt-1">
+          <div class="bg-navy-950/90 border border-gold-400/30 rounded-xl p-4 space-y-3">
+            <div>
+              <span class="text-[11px] text-slate-400">計測タイム</span>
+              <div id="teaFinalTime" class="text-2xl sm:text-3xl font-bold text-gold-200 font-mono">0.00 秒</div>
+              <div id="teaDiffText" class="text-xs text-gold-400">（目標 7.00秒 まで ±0.00秒）</div>
+            </div>
+            <div class="border-t border-gold-400/15 pt-3">
+              <p id="teaComment" class="text-sm sm:text-base text-gold-100 font-serif font-semibold">「……」</p>
+            </div>
+          </div>
+
+          <button id="teaRetryBtn" type="button" class="w-full py-3 px-6 rounded-md btn-gold text-gold-100 font-semibold tracking-widest text-sm shadow-lg active:scale-95 transition-all">
+            もう一度やる
+          </button>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- フッター -->
@@ -431,7 +557,7 @@
         btn.textContent = "本日の奉納は完了しています";
         showStatus(
           "info",
-          "<strong>【本日の奉納受付終了】</strong><br />本日分のお絵馬はお納め済みです。また明日のお参りをお待ちしております。"
+          "<strong>【本日の奉納受付終了】</strong><br />本日分の絵馬はお納め済みです。また明日のお参りをお待ちしております。"
         );
       }
     }
@@ -451,49 +577,174 @@
 
       const emaForm = document.getElementById("emaForm");
       const submitBtn = document.getElementById("emaSubmitBtn");
-      if (!emaForm || !submitBtn) return;
+      if (emaForm && submitBtn) {
+        emaForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
 
-      emaForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
+          const nameVal = (document.getElementById("emaName")?.value || "").trim() || "匿名";
+          const wishVal = (document.getElementById("emaWish")?.value || "").trim();
 
-        const nameVal = (document.getElementById("emaName")?.value || "").trim() || "匿名";
-        const wishVal = (document.getElementById("emaWish")?.value || "").trim();
-
-        if (!wishVal) {
-          showStatus("error", "願い事・奉納内容を入力してください。");
-          return;
-        }
-
-        submitBtn.disabled = true;
-        showStatus("info", "神雲神社へ奉納を行っています…");
-
-        const body = new URLSearchParams();
-        body.append(ENTRY_NAME, nameVal);
-        body.append(ENTRY_WISH, wishVal);
-
-        try {
-          await fetch(FORM_ACTION_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-            },
-            body: body.toString()
-          });
-
-          localStorage.setItem(STORAGE_KEY, getTodayString());
-          submitBtn.disabled = true;
-          submitBtn.textContent = "本日の奉納は完了しています";
-          showStatus("success", "絵馬の奉納を受け付けました。願いが届きますように。");
-          emaForm.reset();
-          if (charCounter) {
-            charCounter.textContent = "0 / 300字";
+          if (!wishVal) {
+            showStatus("error", "願い事・奉納内容を入力してください。");
+            return;
           }
-        } catch (err) {
-          submitBtn.disabled = false;
-          showStatus("error", "あれ？送信中に問題が発生したみたいですね。時間をおいて再度お試しください。");
+
+          submitBtn.disabled = true;
+          showStatus("info", "神雲神社へ奉納を行っています…");
+
+          const body = new URLSearchParams();
+          body.append(ENTRY_NAME, nameVal);
+          body.append(ENTRY_WISH, wishVal);
+
+          try {
+            await fetch(FORM_ACTION_URL, {
+              method: "POST",
+              mode: "no-cors",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+              },
+              body: body.toString()
+            });
+
+            localStorage.setItem(STORAGE_KEY, getTodayString());
+            submitBtn.disabled = true;
+            submitBtn.textContent = "本日の奉納は完了しています";
+            showStatus("success", "絵馬の奉納を受け付けました。願いが届きますように。");
+            emaForm.reset();
+            if (charCounter) {
+              charCounter.textContent = "0 / 300字";
+            }
+          } catch (err) {
+            submitBtn.disabled = false;
+            showStatus("error", "あれ？送信中に問題が発生したみたいですね。時間をおいて再度お試しください。");
+          }
+        });
+      }
+
+      // ================= お茶注ぎ（7秒チャレンジ） =================
+      const teaStartBtn = document.getElementById("teaStartBtn");
+      const teaStopBtn = document.getElementById("teaStopBtn");
+      const teaRetryBtn = document.getElementById("teaRetryBtn");
+      const teaControls = document.getElementById("teaControls");
+      const teaResultBox = document.getElementById("teaResultBox");
+      const teaTimerDisplay = document.getElementById("teaTimerDisplay");
+      const teaHint = document.getElementById("teaHint");
+      const teaKyusu = document.getElementById("teaKyusu");
+      const teaStreamGroup = document.getElementById("teaStreamGroup");
+      const teaSurface = document.getElementById("teaSurface");
+      const teaSpill = document.getElementById("teaSpill");
+      const steamGroup = document.getElementById("steamGroup");
+      const teaFinalTime = document.getElementById("teaFinalTime");
+      const teaDiffText = document.getElementById("teaDiffText");
+      const teaComment = document.getElementById("teaComment");
+
+      if (teaStartBtn && teaStopBtn && teaRetryBtn) {
+        let teaRunning = false;
+        let teaStartTime = 0;
+        let teaRafId = null;
+        let teaElapsed = 0;
+
+        function resetTeaVisual() {
+          if (teaKyusu) teaKyusu.style.transform = "rotate(0deg)";
+          if (teaStreamGroup) teaStreamGroup.classList.add("hidden");
+          if (teaSpill) teaSpill.classList.add("hidden");
+          if (steamGroup) steamGroup.style.opacity = "0";
+          if (teaSurface) {
+            teaSurface.setAttribute("cy", "115");
+            teaSurface.setAttribute("rx", "11");
+            teaSurface.setAttribute("ry", "2.2");
+          }
         }
-      });
+
+        function updateTeaLoop(now) {
+          if (!teaRunning) return;
+          teaElapsed = (now - teaStartTime) / 1000;
+
+          if (teaElapsed <= 3.0) {
+            teaTimerDisplay.textContent = `${teaElapsed.toFixed(2)} 秒`;
+            teaHint.textContent = "3.00秒を過ぎると表示が隠れます…";
+          } else {
+            teaTimerDisplay.textContent = "???.?? 秒";
+            teaHint.textContent = "感覚で 7.00秒 を数えて「止める」を押してください";
+          }
+
+          // 湯呑みのお茶の水位をゆっくり上昇（最大96付近まで）
+          if (teaSurface) {
+            const levelY = Math.max(96, 115 - teaElapsed * 2.5);
+            teaSurface.setAttribute("cy", levelY.toFixed(1));
+          }
+
+          teaRafId = requestAnimationFrame(updateTeaLoop);
+        }
+
+        function startTeaGame() {
+          if (teaRunning) return;
+          teaRunning = true;
+          teaElapsed = 0;
+          teaStartTime = performance.now();
+
+          teaResultBox.classList.add("hidden");
+          teaControls.classList.remove("hidden");
+          teaStartBtn.classList.add("hidden");
+          teaStopBtn.classList.remove("hidden");
+
+          resetTeaVisual();
+          if (teaKyusu) teaKyusu.style.transform = "rotate(-16deg)";
+          if (teaStreamGroup) teaStreamGroup.classList.remove("hidden");
+          if (steamGroup) steamGroup.style.opacity = "1";
+
+          teaRafId = requestAnimationFrame(updateTeaLoop);
+        }
+
+        function stopTeaGame() {
+          if (!teaRunning) return;
+          teaRunning = false;
+          if (teaRafId) cancelAnimationFrame(teaRafId);
+
+          const finalSec = Number(teaElapsed.toFixed(2));
+          const diff = Number((finalSec - 7.0).toFixed(2));
+
+          if (teaKyusu) teaKyusu.style.transform = "rotate(0deg)";
+          if (teaStreamGroup) teaStreamGroup.classList.add("hidden");
+
+          teaTimerDisplay.textContent = `${finalSec.toFixed(2)} 秒`;
+          teaFinalTime.textContent = `${finalSec.toFixed(2)} 秒`;
+          const sign = diff >= 0 ? "+" : "";
+          teaDiffText.textContent = `（目標 7.00秒 まで ${sign}${diff.toFixed(2)} 秒）`;
+
+          // 判定ロジック
+          if (Math.abs(finalSec - 7.0) <= 0.01) {
+            teaComment.textContent = "「お、すごいですね〜！！」";
+          } else if (finalSec < 5.0) {
+            teaComment.textContent = "「ちゃんと数えてました…？」";
+          } else if (finalSec > 7.6) {
+            teaComment.textContent = "「あ〜溢れちゃいましたね。畳が濡れちゃいますよ。」";
+            if (teaSpill) teaSpill.classList.remove("hidden");
+          } else {
+            teaComment.textContent = "「あ、惜しいですね。もっかいやります？」";
+          }
+
+          teaControls.classList.add("hidden");
+          teaStopBtn.classList.add("hidden");
+          teaResultBox.classList.remove("hidden");
+          teaHint.textContent = "結果が出ました";
+        }
+
+        function retryTeaGame() {
+          teaElapsed = 0;
+          teaTimerDisplay.textContent = "0.00 秒";
+          teaHint.textContent = "「お茶を注ぎ始める」を押してスタート";
+          resetTeaVisual();
+          teaResultBox.classList.add("hidden");
+          teaControls.classList.remove("hidden");
+          teaStartBtn.classList.remove("hidden");
+          teaStopBtn.classList.add("hidden");
+        }
+
+        teaStartBtn.addEventListener("click", startTeaGame);
+        teaStopBtn.addEventListener("click", stopTeaGame);
+        teaRetryBtn.addEventListener("click", retryTeaGame);
+      }
     });
   </script>
 </body>
