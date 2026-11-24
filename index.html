@@ -382,7 +382,6 @@
     <section id="tea-game" class="space-y-6 scroll-mt-6">
       <div class="washi-card p-6 sm:p-8 rounded-2xl text-center space-y-6 shadow-2xl">
         <div>
-          <span class="text-[11px] text-gold-400/80 tracking-widest block mb-1">TEA TIME</span>
           <h2 class="text-xl sm:text-2xl font-bold text-gold-200 tracking-wider">お茶注ぎ</h2>
           <p class="text-xs sm:text-sm text-slate-300 mt-2 font-serif leading-relaxed">
             心の中で<span class="text-gold-300 font-bold">【7.00秒】</span>を数え、タイミングよく止めてください。<br />
@@ -398,6 +397,12 @@
 
           <div class="w-full h-40 flex items-center justify-center">
             <svg viewBox="0 0 240 150" class="w-64 h-40 overflow-visible">
+              <!-- こぼれたお茶（一番下のレイヤー：湯呑みより前に描画して下側に敷く） -->
+              <g id="teaSpill" class="hidden">
+                <ellipse cx="120" cy="127" rx="46" ry="6" fill="#4d7c0f" opacity="0.85" />
+                <ellipse cx="120" cy="127" rx="35" ry="4.2" fill="#65a30d" opacity="0.95" />
+              </g>
+
               <!-- 湯気 -->
               <g id="steamGroup" class="opacity-0 transition-opacity duration-300">
                 <path d="M 116 78 Q 113 68 116 58" stroke="#eddcae" stroke-width="2" stroke-linecap="round" fill="none" class="steam-1" />
@@ -423,13 +428,7 @@
                 <line x1="120" y1="53" x2="120" y2="92" stroke="#ecfccb" stroke-width="1.2" stroke-linecap="round" class="tea-stream" />
               </g>
 
-              <!-- こぼれたお茶（湯呑みより前に置いて下に敷く） -->
-              <g id="teaSpill" class="hidden">
-                <ellipse cx="120" cy="125" rx="44" ry="6.5" fill="#4d7c0f" opacity="0.85" />
-                <ellipse cx="120" cy="125" rx="34" ry="4.8" fill="#65a30d" opacity="0.95" />
-              </g>
-
-              <!-- 湯呑み -->
+              <!-- 湯呑み（こぼれたお茶より後に描画して手前・上に表示） -->
               <g id="teaYunomi">
                 <path d="M 105 90 L 109 120 Q 120 124 131 120 L 135 90 Z" fill="#07101f" stroke="#c8a96e" stroke-width="2" />
                 <ellipse cx="120" cy="90" rx="15" ry="3.8" fill="#132646" stroke="#c8a96e" stroke-width="1.5" />
@@ -577,49 +576,49 @@
 
       const emaForm = document.getElementById("emaForm");
       const submitBtn = document.getElementById("emaSubmitBtn");
-      if (!emaForm || !submitBtn) return;
+      if (emaForm && submitBtn) {
+        emaForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
 
-      emaForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
+          const nameVal = (document.getElementById("emaName")?.value || "").trim() || "匿名";
+          const wishVal = (document.getElementById("emaWish")?.value || "").trim();
 
-        const nameVal = (document.getElementById("emaName")?.value || "").trim() || "匿名";
-        const wishVal = (document.getElementById("emaWish")?.value || "").trim();
-
-        if (!wishVal) {
-          showStatus("error", "願い事・奉納内容を入力してください。");
-          return;
-        }
-
-        submitBtn.disabled = true;
-        showStatus("info", "神雲神社へ奉納を行っています…");
-
-        const body = new URLSearchParams();
-        body.append(ENTRY_NAME, nameVal);
-        body.append(ENTRY_WISH, wishVal);
-
-        try {
-          await fetch(FORM_ACTION_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-            },
-            body: body.toString()
-          });
-
-          localStorage.setItem(STORAGE_KEY, getTodayString());
-          submitBtn.disabled = true;
-          submitBtn.textContent = "本日の奉納は完了しています";
-          showStatus("success", "絵馬の奉納を受け付けました。願いが届きますように。");
-          emaForm.reset();
-          if (charCounter) {
-            charCounter.textContent = "0 / 300字";
+          if (!wishVal) {
+            showStatus("error", "願い事・奉納内容を入力してください。");
+            return;
           }
-        } catch (err) {
-          submitBtn.disabled = false;
-          showStatus("error", "あれ？送信中に問題が発生したみたいですね。時間をおいて再度お試しください。");
-        }
-      });
+
+          submitBtn.disabled = true;
+          showStatus("info", "神雲神社へ奉納を行っています…");
+
+          const body = new URLSearchParams();
+          body.append(ENTRY_NAME, nameVal);
+          body.append(ENTRY_WISH, wishVal);
+
+          try {
+            await fetch(FORM_ACTION_URL, {
+              method: "POST",
+              mode: "no-cors",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+              },
+              body: body.toString()
+            });
+
+            localStorage.setItem(STORAGE_KEY, getTodayString());
+            submitBtn.disabled = true;
+            submitBtn.textContent = "本日の奉納は完了しています";
+            showStatus("success", "絵馬の奉納を受け付けました。願いが届きますように。");
+            emaForm.reset();
+            if (charCounter) {
+              charCounter.textContent = "0 / 300字";
+            }
+          } catch (err) {
+            submitBtn.disabled = false;
+            showStatus("error", "あれ？送信中に問題が発生したみたいですね。時間をおいて再度お試しください。");
+          }
+        });
+      }
 
       // ================= お茶注ぎ =================
       const teaStartBtn = document.getElementById("teaStartBtn");
